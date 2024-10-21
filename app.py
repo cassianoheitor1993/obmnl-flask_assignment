@@ -14,7 +14,8 @@ transactions = [
 # Read operation
 @app.route("/")
 def get_transactions():
-    return render_template("transactions.html", transactions=transactions)
+    total = sum(t['amount'] for t in transactions)
+    return render_template("transactions.html", transactions=transactions, total_amount=total)
 
 # Create operation: Display add transaction form
 @app.route("/add", methods=["GET", "POST"])
@@ -55,6 +56,32 @@ def delete_transaction(transaction_id):
 
     del transactions[index]
     return redirect(url_for("get_transactions"))
+
+# Search operation
+@app.route("/search", methods=["GET", "POST"])
+def search_transactions():
+    if request.method == 'POST':
+        min_amount = float(request.form['min_amount'])
+        max_amount = float(request.form['max_amount'])
+
+        # Server-side validation
+        if min_amount >= max_amount:
+            return "Minimum amount must be less than maximum amount", 400
+        
+        # Filter transactions based on min and max amount
+        search_results = [
+            t for t in transactions 
+            if min_amount <= t['amount'] <= max_amount
+        ]
+
+        total = sum(t['amount'] for t in search_results)
+
+        return render_template("transactions.html", transactions=search_results, 
+                               min_value=min_amount, max_value=max_amount, filtered=True, total_amount=total)
+
+    return render_template("search.html")
+
+
 
 # Run the Flask app
 if __name__ == "__main__":

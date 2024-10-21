@@ -42,11 +42,15 @@
 </head>
 <body>
     <div class="container">
-        <h1 class="text-center">Transaction Records</h1>
-
+        {% if filtered %}
+        <h1 class="text-center">Transaction Records Results</h1>
+        <h5 class="text-center">Number of Records: {{ transactions|length }} in the range of {{ min_value }} to {{ max_value }}</h5>
+        {% else %}
+        <h1 class="text-center">All Transactions</h1>
+        {% endif %}
+        <p class="text-center">Total Amount: {{ total_amount }}</p>
         <table class="table transaction-table">
             <thead>
-                <tr>
                     <th>Date</th>
                     <th>Amount</th>
                     <th>Actions</th>
@@ -70,6 +74,10 @@
 
         <div class="d-flex justify-content-center">
             <a class="btn btn-success" href="{{ url_for('add_transaction') }}">Add Transaction</a>
+            <a class="btn btn-info ml-2" href="{{ url_for('search_transactions') }}">Search Transactions</a>
+            {% if filtered %}
+            <a class="btn btn-warning ml-2" href="{{ url_for('get_transactions') }}">Show All</a>
+            {% endif %}
         </div>
     </div>
 </body>

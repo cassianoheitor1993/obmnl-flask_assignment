@@ -39,12 +39,32 @@
             background-color: #f6d365;
             border-color: #f6d365;
         }
+
+        .error {
+            color: red;
+            margin-top: 10px;
+        }
     </style>
+    <script>
+        function validateAmounts() {
+            const minAmount = parseFloat(document.getElementById('min_amount').value);
+            const maxAmount = parseFloat(document.getElementById('max_amount').value);
+            const errorMessage = document.getElementById('error_message');
+
+            if (minAmount >= maxAmount) {
+                errorMessage.textContent = "Maximum amount must be greater than minimum amount.";
+                return false; // Prevent form submission
+            } else {
+                errorMessage.textContent = ""; // Clear error message
+                return true; // Allow form submission
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1 class="text-center">Search Transactions</h1>
-        <form class="form-container" method="post">
+        <form class="form-container" method="post" onsubmit="return validateAmounts()">
             <div class="form-group">
                 <label for="min_amount">Minimum Amount:</label>
                 <input type="number" class="form-control" id="min_amount" name="min_amount" step="0.01" required>
@@ -53,10 +73,13 @@
                 <label for="max_amount">Maximum Amount:</label>
                 <input type="number" class="form-control" id="max_amount" name="max_amount" step="0.01" required>
             </div>
+            <div class="error" id="error_message"></div>
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary">Search</button>
+                <button type="reset" class="btn btn-secondary">Reset</button>
             </div>
         </form>
+        <a class="btn btn-info" href="{{ url_for('get_transactions') }}">Go Back</a>
     </div>
 </body>
 </html>
